@@ -1,0 +1,59 @@
+{% extends 'blog/base.html.twig' %}
+
+{% block title %}BlogPost index
+{% endblock %}
+
+{% block body %}
+	<div class="container-fluid text-center my-3 bg-light">
+		<h1 data-aos="fade-up" class="fw-bolder fst-italic">Bienvenue sur le Blog de l'école privée Mamadou TRAORE</h1>
+		<h2>
+			<p data-aos="fade-up" class="lead mb-0 fst-italic text-danger mt-3">
+
+				<strong class="mx-5">Nos
+					{#{{ publications.getTotalItemCount }}#}
+					dernières publications(s)</strong>
+				<a class="ms-5 btn btn-primary btn-sm" href="{{ path('app_publications_index') }}">Liste des toutes les publications</a>
+
+			</p>
+
+		</h2>
+	</div>
+	<div class="container-fluid mt-5">
+		<div class="row g-5">
+			<div class="col-md-2 d-flex mt-2">
+				<div class="position-sticky  mt-3" style="width: 20rem;">
+					<div class="p-4 mb-3 bg-secondary rounded h-100">
+						<h4 class="fw-bolder fst-italic">Catégories</h4>
+						<ul>
+							<li>Français</li>
+							<li>Anglais</li>
+							<li>Biologie</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div data-aos="fade-up" class="col-md-10 d-flex flex-wrap  mt-2">
+				{% for publication in publications %}
+					<div class="card text-center mt-3  mx-2" style="width: 20rem;">
+						<div class="col-md-2">
+							<img src="{{publication.featuredImage}}" class="img-fluid rounded-start" alt="...">
+						</div>
+						<h5 class="card-title">{{ publication.titre }}</h5>
+						<p class="card-text h-50">{{ publication.contenu|striptags|u.truncate(150,'...',false)}}</p>
+						<div href="" class="card-footer">
+							<p class="h6 fs-6 fw-lighter fst-italic text-capitalize text-muted mb-0 ms-auto">
+								<small>
+									<time datetime="2022-06-02">Ajoutée le :
+										{{ publication.createdAt ? publication.createdAt|date('d-m-Y h\\h i\\mn s') : '' }}</time>
+								</small>
+							</p>
+							<a class="btn btn-primary btn-sm mt-2 d-flex justify-content-center" href="{{ path('app_publications_show', {'slug': publication.slug}) }}">Afficher</a>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+
+		</div>
+	</div>
+{% endblock %}

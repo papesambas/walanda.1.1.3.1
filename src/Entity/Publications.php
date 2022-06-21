@@ -6,6 +6,7 @@ use App\Repository\PublicationsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: PublicationsRepository::class)]
 class Publications
@@ -18,26 +19,29 @@ class Publications
     #[ORM\Column(type: 'string', length: 255)]
     private $titre;
 
-    #[ORM\Column(type: 'string', length: 128)]
+    #[ORM\Column(type: 'string', length: 128, unique: true)]
+    #[Gedmo\Slug(fields: ['titre'])]
     private $slug;
 
     #[ORM\Column(type: 'text')]
     private $contenu;
 
     #[ORM\Column(type: 'datetime')]
+    #[Gedmo\Timestampable(on: 'create')]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Gedmo\Timestampable(on: 'update')]
     private $updatedAt;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $featuredImage;
 
     #[ORM\Column(type: 'boolean')]
-    private $isActif;
+    private $isActif = false;
 
     #[ORM\Column(type: 'boolean')]
-    private $isAfficher;
+    private $isAfficher = false;
 
     #[ORM\ManyToOne(targetEntity: Categories::class, inversedBy: 'publications')]
     #[ORM\JoinColumn(nullable: false)]
@@ -50,9 +54,18 @@ class Publications
     #[ORM\ManyToMany(targetEntity: Users::class, inversedBy: 'favoris')]
     private $favoris;
 
+    #[ORM\OneToMany(mappedBy: 'publication', targetEntity: Comments::class, orphanRemoval: true)]
+    private $comments;
+
     public function __construct()
     {
         $this->favoris = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->titre;
     }
 
     public function getId(): ?int
@@ -77,12 +90,12 @@ class Publications
         return $this->slug;
     }
 
-    public function setSlug(string $slug): self
+    /*public function setSlug(string $slug): self
     {
         $this->slug = $slug;
 
         return $this;
-    }
+    }*/
 
     public function getContenu(): ?string
     {
@@ -101,24 +114,24 @@ class Publications
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    /*public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
-    }
+    }*/
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    /*public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
-    }
+    }*/
 
     public function getFeaturedImage(): ?string
     {
@@ -200,6 +213,36 @@ class Publications
     public function removeFavori(Users $favori): self
     {
         $this->favoris->removeElement($favori);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comments>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comments $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setPublication($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comments $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getPublication() === $this) {
+                $comment->setPublication(null);
+            }
+        }
 
         return $this;
     }

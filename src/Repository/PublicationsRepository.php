@@ -75,4 +75,15 @@ class PublicationsRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function lastsix()
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.id', 'desc')
+            ->where('p.isActif = true')
+            ->andWhere('p.isAfficher=true')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
+    }
 }

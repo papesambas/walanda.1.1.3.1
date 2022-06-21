@@ -6,6 +6,7 @@ use App\Repository\NiveauxRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: NiveauxRepository::class)]
 class Niveaux
@@ -22,7 +23,8 @@ class Niveaux
     #[ORM\JoinColumn(nullable: false)]
     private $cycle;
 
-    #[ORM\Column(type: 'string', length: 128)]
+    #[ORM\Column(type: 'string', length: 128, unique: true)]
+    #[Gedmo\Slug(fields: ['designation'])]
     private $slug;
 
     #[ORM\OneToMany(mappedBy: 'niveau', targetEntity: Classes::class)]
@@ -35,6 +37,11 @@ class Niveaux
     {
         $this->classes = new ArrayCollection();
         $this->categories = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->designation;
     }
 
     public function getId(): ?int
