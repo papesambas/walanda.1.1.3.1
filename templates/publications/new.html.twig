@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Publications{% endblock %}
+{% block title %}New Publications
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Publications</h1>
+	<h1>Create new Publications</h1>
 
-    {{ include('publications/_form.html.twig') }}
+	{{ include('publications/_form.html.twig') }}
 
-    <a href="{{ path('app_publications_index') }}">back to list</a>
+	<a href="{{ path('app_publications_index') }}">Voir la liste des publications</a>
+	<a href="{{ path('app_users_profile') }}">Retour</a>
 {% endblock %}

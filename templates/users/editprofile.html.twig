@@ -1,0 +1,26 @@
+{% extends 'users/base.html.twig' %}
+
+{% block title %}Modification du Profil de
+	{{app.user.prenom}}
+	{{app.user.nom}}
+{% endblock %}
+
+{% block body %}
+
+	<div class="container">
+
+
+		{% for message in app.flashes('message') %}
+			<div class="alert alert-success" role="alert">{{ message }}</div>
+		{% endfor %}
+		<div class="col-6 m-3">
+			<h3>Publication de :
+				{{app.user.prenom}}
+				{{app.user.nom}}
+			</h3>
+			{{form(form)}}
+			</div>
+
+
+		</div>
+	{% endblock %}

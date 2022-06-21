@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Users;
 use App\Form\UsersType;
 use App\Entity\Publications;
+use App\Form\EditProfileType;
 use App\Form\PublicationsType;
 use App\Repository\UsersRepository;
 use App\Repository\PublicationsRepository;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/users')]
 class UsersController extends AbstractController
@@ -22,23 +24,44 @@ class UsersController extends AbstractController
         return $this->render('users/acceuil.html.twig');
     }
 
-    #[Route('/edit/profile', name: 'app_users_edit_profile', methods: ['GET'])]
-    public function editprofile(UsersRepository $usersRepository): Response
+    #[Route('/edit/profile', name: 'app_users_edit_profile', methods: ['GET', 'POST'])]
+    public function editprofile(Request $request, UsersRepository $usersRepos): Response
     {
         $user = $this->getUser();
-        return $this->render('users/acceuil.html.twig', [
-            'users' => $usersRepository->findAll(),
+        $form = $this->createForm(EditProfileType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $usersRepos->add($user);
+            $this->addFlash('message', 'Profil mis à jour');
+            return $this->redirectToRoute('app_users_profile', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('users/editProfile.html.twig', [
+            'form' => $form,
         ]);
     }
 
 
-    #[Route('/edit/pass', name: 'app_users_edit_pass', methods: ['GET'])]
-    public function pass(UsersRepository $usersRepository): Response
+    #[Route('/edit/pass', name: 'app_users_edit_pass', methods: ['GET', 'POST'])]
+    public function pass(Request $request, UsersRepository $usersRepos, UserPasswordHasherInterface $passwordEncoder): Response
     {
         $user = $this->getUser();
-        return $this->render('users/acceuil.html.twig', [
-            'users' => $usersRepository->findAll(),
-        ]);
+        if ($request->isMethod('POST')) {
+            $user = $this->getUser();
+            // ovérifie si les 2 mots de passe sont identiques
+            if ($request->get('pass') == $request->get('pass2')) {
+                $user->setPassword($passwordEncoder->hashPassword($user, $request->get('pass')));
+                $usersRepos->add($user);
+                $this->addFlash('message', 'Mot de pas a étémis à jour');
+                return $this->redirectToRoute('app_users_profile', [], Response::HTTP_SEE_OTHER);
+            } else {
+                $this->addFlash('error', 'les deux (2) mots de passe ne sont pas identiques');
+            }
+        }
+
+
+        return $this->renderForm('users/editPass.html.twig');
     }
 
     #[Route('/index', name: 'app_users_index', methods: ['GET'])]
