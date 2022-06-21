@@ -19,17 +19,24 @@ class UsersController extends AbstractController
     #[Route('/', name: 'app_users_profile', methods: ['GET'])]
     public function profile(UsersRepository $usersRepository): Response
     {
+        return $this->render('users/acceuil.html.twig');
+    }
+
+    #[Route('/edit/profile', name: 'app_users_edit_profile', methods: ['GET'])]
+    public function editprofile(UsersRepository $usersRepository): Response
+    {
         $user = $this->getUser();
-        return $this->render('users/index.html.twig', [
+        return $this->render('users/acceuil.html.twig', [
             'users' => $usersRepository->findAll(),
         ]);
     }
 
-    #[Route('/pass', name: 'app_users_pass', methods: ['GET'])]
+
+    #[Route('/edit/pass', name: 'app_users_edit_pass', methods: ['GET'])]
     public function pass(UsersRepository $usersRepository): Response
     {
         $user = $this->getUser();
-        return $this->render('users/index.html.twig', [
+        return $this->render('users/acceuil.html.twig', [
             'users' => $usersRepository->findAll(),
         ]);
     }
