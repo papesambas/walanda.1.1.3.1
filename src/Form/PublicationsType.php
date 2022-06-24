@@ -10,6 +10,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichFileType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class PublicationsType extends AbstractType
 {
@@ -18,7 +20,12 @@ class PublicationsType extends AbstractType
         $builder
             ->add('titre', TextType::class)
             ->add('contenu', CKEditorType::class)
-            ->add('featuredImage')
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Image de la Publication',
+                'label_attr' => [
+                    'class' => 'form-label mt-4'
+                ]
+            ])
             ->add('categorie', EntityType::class, [
                 'class' => Categories::class
             ])

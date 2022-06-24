@@ -2,13 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\PublicationsRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use App\Repository\PublicationsRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PublicationsRepository::class)]
+#[Vich\Uploadable]
 class Publications
 {
     #[ORM\Id]
@@ -35,7 +38,10 @@ class Publications
     private $updatedAt;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $featuredImage;
+    private ?string $featuredImage = null;
+
+    #[Vich\UploadableField(mapping: "featured_images", fileNameProperty: "featuredImage")]
+    private ?File $imageFile = null;
 
     #[ORM\Column(type: 'boolean')]
     private $isActif = false;
@@ -245,5 +251,30 @@ class Publications
         }
 
         return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageSize(?int $imageSize): void
+    {
+        $this->imageSize = $imageSize;
+    }
+
+    public function getImageSize(): ?int
+    {
+        return $this->imageSize;
     }
 }
