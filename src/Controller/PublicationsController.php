@@ -24,6 +24,9 @@ class PublicationsController extends AbstractController
     #[Route('/new', name: 'app_publications_new', methods: ['GET', 'POST'])]
     public function new(Request $request, PublicationsRepository $publicationsRepository): Response
     {
+        $user = $this->getUser();
+        dd($user);
+
         $publication = new Publications();
         $form = $this->createForm(PublicationsType::class, $publication);
         $form->handleRequest($request);
@@ -42,6 +45,8 @@ class PublicationsController extends AbstractController
     #[Route('/{slug}', name: 'app_publications_show', methods: ['GET'])]
     public function show(Publications $publication): Response
     {
+        $user = $this->getUser();
+
         return $this->render('publications/show.html.twig', [
             'publication' => $publication,
         ]);
@@ -50,6 +55,7 @@ class PublicationsController extends AbstractController
     #[Route('/{slug}/edit', name: 'app_publications_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Publications $publication, PublicationsRepository $publicationsRepository): Response
     {
+        $user = $this->getUser();
         $form = $this->createForm(PublicationsType::class, $publication);
         $form->handleRequest($request);
 

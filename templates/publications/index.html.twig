@@ -15,7 +15,6 @@
 				<th>Contenu</th>
 				<th>CreatedAt</th>
 				<th>UpdatedAt</th>
-				<th>FeaturedImage</th>
 				<th>IsActif</th>
 				<th>IsAfficher</th>
 				<th>actions</th>
@@ -30,7 +29,6 @@
 					<td>{{ publication.contenu }}</td>
 					<td>{{ publication.createdAt ? publication.createdAt|date('Y-m-d H:i:s') : '' }}</td>
 					<td>{{ publication.updatedAt ? publication.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-					<td>{{ publication.featuredImage }}</td>
 					<td>{{ publication.isActif ? 'Yes' : 'No' }}</td>
 					<td>{{ publication.isAfficher ? 'Yes' : 'No' }}</td>
 					<td>

@@ -7,11 +7,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use App\Repository\PublicationsRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PublicationsRepository::class)]
-#[Vich\Uploadable]
 class Publications
 {
     #[ORM\Id]
@@ -37,12 +34,6 @@ class Publications
     #[Gedmo\Timestampable(on: 'update')]
     private $updatedAt;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $featuredImage = null;
-
-    #[Vich\UploadableField(mapping: "featured_images", fileNameProperty: "featuredImage")]
-    private ?File $imageFile = null;
-
     #[ORM\Column(type: 'boolean')]
     private $isActif = false;
 
@@ -62,6 +53,12 @@ class Publications
 
     #[ORM\OneToMany(mappedBy: 'publication', targetEntity: Comments::class, orphanRemoval: true)]
     private $comments;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $featuredText;
+
+    #[ORM\ManyToOne(targetEntity: Medias::class)]
+    private $featuredImage;
 
     public function __construct()
     {
@@ -138,18 +135,6 @@ class Publications
 
         return $this;
     }*/
-
-    public function getFeaturedImage(): ?string
-    {
-        return $this->featuredImage;
-    }
-
-    public function setFeaturedImage(?string $featuredImage): self
-    {
-        $this->featuredImage = $featuredImage;
-
-        return $this;
-    }
 
     public function getIsActif(): ?bool
     {
@@ -253,28 +238,27 @@ class Publications
         return $this;
     }
 
-    public function getImageFile(): ?File
+    public function getFeaturedText(): ?string
     {
-        return $this->imageFile;
+        return $this->featuredText;
     }
 
-    public function setImageName(?string $imageName): void
+    public function setFeaturedText(?string $featuredText): self
     {
-        $this->imageName = $imageName;
+        $this->featuredText = $featuredText;
+
+        return $this;
     }
 
-    public function getImageName(): ?string
+    public function getFeaturedImage(): ?Medias
     {
-        return $this->imageName;
+        return $this->featuredImage;
     }
 
-    public function setImageSize(?int $imageSize): void
+    public function setFeaturedImage(?Medias $featuredImage): self
     {
-        $this->imageSize = $imageSize;
-    }
+        $this->featuredImage = $featuredImage;
 
-    public function getImageSize(): ?int
-    {
-        return $this->imageSize;
+        return $this;
     }
 }
