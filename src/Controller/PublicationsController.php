@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Publications;
 use App\Form\PublicationsType;
 use App\Repository\PublicationsRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,21 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/publications')]
 class PublicationsController extends AbstractController
 {
-    #[Route('/', name: 'app_publications_index', methods: ['GET'])]
+    #[Route('/', name: 'app_publications_acceuil', methods: ['GET'])]
+    public function acceuil(Request $request, PaginatorInterface $paginator, PublicationsRepository $publicationsRepository): Response
+    {
+        $publications = $paginator->paginate(
+            $publicationsRepository->publie(),
+            $request->query->getInt('page', 1),
+            3
+        );
+
+        return $this->render('publications/acceuil.html.twig', [
+            'publications' => $publications,
+        ]);
+    }
+
+    #[Route('/index', name: 'app_publications_index', methods: ['GET'])]
     public function index(PublicationsRepository $publicationsRepository): Response
     {
         return $this->render('publications/index.html.twig', [
@@ -43,8 +58,12 @@ class PublicationsController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'app_publications_show', methods: ['GET'])]
-    public function show(Publications $publication): Response
+    public function show(?Publications $publication): Response
     {
+        if (!$publication) {
+            return $this->redirectToRoute('app_blog');
+        }
+
         $user = $this->getUser();
 
         return $this->render('publications/show.html.twig', [
@@ -53,7 +72,7 @@ class PublicationsController extends AbstractController
     }
 
     #[Route('/{slug}/edit', name: 'app_publications_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Publications $publication, PublicationsRepository $publicationsRepository): Response
+    public function edit(Request $request, ?Publications $publication, PublicationsRepository $publicationsRepository): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(PublicationsType::class, $publication);

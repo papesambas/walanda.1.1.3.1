@@ -86,4 +86,14 @@ class PublicationsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function publie()
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.id', 'desc')
+            ->where('p.isActif = true')
+            ->andWhere('p.isAfficher=true')
+            ->getQuery()
+            ->getResult();
+    }
 }

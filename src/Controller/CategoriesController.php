@@ -40,15 +40,18 @@ class CategoriesController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'app_categories_show', methods: ['GET'])]
-    public function show(Categories $category): Response
+    public function show(?Categories $category): Response
     {
+        if (!$category) {
+            return $this->redirectToRoute('app_blog');
+        }
         return $this->render('categories/show.html.twig', [
             'category' => $category,
         ]);
     }
 
     #[Route('/{slug}/edit', name: 'app_categories_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Categories $category, CategoriesRepository $categoriesRepository): Response
+    public function edit(Request $request, ?Categories $category, CategoriesRepository $categoriesRepository): Response
     {
         $form = $this->createForm(CategoriesType::class, $category);
         $form->handleRequest($request);
