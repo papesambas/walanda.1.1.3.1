@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Publications;
 use App\Form\PublicationsType;
 use App\Repository\PublicationsRepository;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,13 +30,18 @@ class PublicationsController extends AbstractController
     }
 
     #[Route('/index', name: 'app_publications_index', methods: ['GET'])]
-    public function index(PublicationsRepository $publicationsRepository): Response
+    public function index(Request $request, PaginatorInterface $paginator, PublicationsRepository $publicationsRepository): Response
     {
+        $publications = $paginator->paginate(
+            $publicationsRepository->findAll(),
+            $request->query->getInt('page', 1),
+            7
+        );
+
         return $this->render('publications/index.html.twig', [
-            'publications' => $publicationsRepository->findAll(),
+            'publications' => $publications,
         ]);
     }
-
     #[Route('/new', name: 'app_publications_new', methods: ['GET', 'POST'])]
     public function new(Request $request, PublicationsRepository $publicationsRepository): Response
     {

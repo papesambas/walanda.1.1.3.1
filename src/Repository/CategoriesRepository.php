@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Categories;
+use App\Entity\Publications;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -75,4 +76,15 @@ class CategoriesRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function publie()
+    {
+        return $this->createQueryBuilder('c')
+            ->join('App\Entity\Publications', 'p', 'with', 'c.id = p.categorie')
+            ->orderBy('p.id', 'desc')
+            ->where('p.isActif = true')
+            ->andWhere('p.isAfficher=true')
+            ->getQuery()
+            ->getResult();
+    }
 }

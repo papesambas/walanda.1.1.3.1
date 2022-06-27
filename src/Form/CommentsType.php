@@ -17,8 +17,7 @@ class CommentsType extends AbstractType
             ->add('createdAt')
             ->add('isActif')
             ->add('user')
-            ->add('publication')
-        ;
+            ->add('publication');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

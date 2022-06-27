@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{{category.nom}}
+	{{categories.nom}}
 {% endblock %}
 
 {% block body %}
@@ -11,30 +11,30 @@
 		<tbody>
 			<tr>
 				<th>Id</th>
-				<td>{{ category.id }}</td>
+				<td>{{ categories.id }}</td>
 			</tr>
 			<tr>
 				<th>Nom</th>
-				<td>{{ category.nom }}</td>
+				<td>{{ categories.nom }}</td>
 			</tr>
 			<tr>
 				<th>Slug</th>
-				<td>{{ category.slug }}</td>
+				<td>{{ categories.slug }}</td>
 			</tr>
 			<tr>
 				<th>Description</th>
-				<td>{{ category.description }}</td>
+				<td>{{ categories.description }}</td>
 			</tr>
 			<tr>
 				<th>Couleur</th>
-				<td>{{ category.couleur }}</td>
+				<td>{{ categories.couleur }}</td>
 			</tr>
 		</tbody>
 	</table>
 
 	<a href="{{ path('app_categories_index') }}">back to list</a>
 
-	<a href="{{ path('app_categories_edit', {'slug': category.slug}) }}">edit</a>
+	<a href="{{ path('app_categories_edit', {'slug': categories.slug}) }}">edit</a>
 
 	{{ include('categories/_delete_form.html.twig') }}
 {% endblock %}

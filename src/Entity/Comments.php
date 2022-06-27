@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\CommentsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: CommentsRepository::class)]
 class Comments
@@ -20,6 +23,7 @@ class Comments
     private $rgpd;
 
     #[ORM\Column(type: 'datetime')]
+    #[Gedmo\Timestampable(on: 'create')]
     private $createdAt;
 
     #[ORM\Column(type: 'boolean')]
@@ -32,6 +36,17 @@ class Comments
     #[ORM\ManyToOne(targetEntity: Publications::class, inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
     private $publication;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'reponse')]
+    private $parent;
+
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    private $reponse;
+
+    public function __construct()
+    {
+        $this->reponse = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,6 +121,48 @@ class Comments
     public function setPublication(?Publications $publication): self
     {
         $this->publication = $publication;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getReponse(): Collection
+    {
+        return $this->reponse;
+    }
+
+    public function addReponse(self $reponse): self
+    {
+        if (!$this->reponse->contains($reponse)) {
+            $this->reponse[] = $reponse;
+            $reponse->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReponse(self $reponse): self
+    {
+        if ($this->reponse->removeElement($reponse)) {
+            // set the owning side to null (unless already changed)
+            if ($reponse->getParent() === $this) {
+                $reponse->setParent(null);
+            }
+        }
 
         return $this;
     }

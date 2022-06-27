@@ -1,6 +1,7 @@
 {% extends 'blog/base.html.twig' %}
 
-{% block title %}Publications index
+{% block title %}
+	{{ category.nom }}
 {% endblock %}
 
 {% block body %}
@@ -14,14 +15,14 @@
 
 		<div class="col-md-10">
 			<div class="row">
-				<h3 class="pb-4 mb-4 fst-italic border-bottom">Publications actives</h3>
+				<h3 class="pb-4 mb-4 fst-italic border-bottom">{{ category.nom }}</h3>
 				<div class="articles-list">
-					{% include 'publications/liste.html.twig' with {publications} %}
+					{% include 'publications/liste.html.twig' with {publications: category.publications } %}
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="navigation d-flex justify-content-center mt-4 ">
-		{{ knp_pagination_render(publications) }}
-	</div>
+	{#<div class="navigation d-flex justify-content-center mt-4 ">
+							{{ knp_pagination_render(categories) }}
+						</div>#}
 {% endblock %}

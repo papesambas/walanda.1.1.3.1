@@ -4,19 +4,19 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Publications index</h1>
+	<h3>Liste des Publications</h3>
+	<a href="{{ path('app_user_publications_new') }}">Create new</a>
 
 	<table class="table">
 		<thead>
 			<tr>
 				<th>Id</th>
 				<th>Titre</th>
-				<th>Slug</th>
 				<th>Contenu</th>
-				<th>CreatedAt</th>
-				<th>UpdatedAt</th>
-				<th>IsActif</th>
-				<th>IsAfficher</th>
+				<th>Créée le</th>
+				{#<th>UpdatedAt</th>#}
+				<th>Active</th>
+				{#<th>IsAfficher</th>#}
 				<th>actions</th>
 			</tr>
 		</thead>
@@ -25,12 +25,11 @@
 				<tr>
 					<td>{{ publication.id }}</td>
 					<td>{{ publication.titre }}</td>
-					<td>{{ publication.slug }}</td>
-					<td>{{ publication.contenu }}</td>
-					<td>{{ publication.createdAt ? publication.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-					<td>{{ publication.updatedAt ? publication.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-					<td>{{ publication.isActif ? 'Yes' : 'No' }}</td>
-					<td>{{ publication.isAfficher ? 'Yes' : 'No' }}</td>
+					<td class="col-8">{{ publication.contenu |striptags|slice(0,200) ~ '...' }}</td>
+					<td>{{ publication.createdAt ? publication.createdAt|date('Y-m-d') : '' }}</td>
+					{#<td>{{ publication.updatedAt ? publication.updatedAt|date('Y-m-d') : '' }}</td>#}
+					<td>{{ publication.isActif ? 'Oui' : 'Non' }}</td>
+					{#<td>{{ publication.isAfficher ? 'Yes' : 'No' }}</td>#}
 					<td>
 						<a href="{{ path('app_publications_show', {'slug': publication.slug}) }}">show</a>
 						<a href="{{ path('app_publications_edit', {'slug': publication.slug}) }}">edit</a>
@@ -42,7 +41,12 @@
 				</tr>
 			{% endfor %}
 		</tbody>
+		<a href="{{ path('app_user_publications_new') }}">Create new</a>
+
 	</table>
 
-	<a href="{{ path('app_user_publications_new') }}">Create new</a>
+	<div class="navigation d-flex justify-content-center mt-4 ">
+		{{ knp_pagination_render(publications) }}
+	</div>
+
 {% endblock %}

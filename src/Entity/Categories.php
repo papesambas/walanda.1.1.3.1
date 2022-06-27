@@ -29,9 +29,6 @@ class Categories
     #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $couleur;
 
-    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'parent')]
-    private $parent;
-
     #[ORM\ManyToOne(targetEntity: Niveaux::class, inversedBy: 'categories')]
     private $niveau;
 
@@ -98,30 +95,6 @@ class Categories
     public function setCouleur(?string $couleur): self
     {
         $this->couleur = $couleur;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getParent(): Collection
-    {
-        return $this->parent;
-    }
-
-    public function addParent(self $parent): self
-    {
-        if (!$this->parent->contains($parent)) {
-            $this->parent[] = $parent;
-        }
-
-        return $this;
-    }
-
-    public function removeParent(self $parent): self
-    {
-        $this->parent->removeElement($parent);
 
         return $this;
     }
