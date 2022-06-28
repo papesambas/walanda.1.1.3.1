@@ -67,7 +67,7 @@ class CommentsController extends AbstractController
     #[Route('/{id}', name: 'app_comments_delete', methods: ['POST'])]
     public function delete(Request $request, Comments $comment, CommentsRepository $commentsRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$comment->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
             $commentsRepository->remove($comment);
         }
 

@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Comments;
 use App\Entity\Publications;
+use App\Form\CommentsType;
 use App\Form\PublicationsType;
+use App\Repository\CategoriesRepository;
+use App\Repository\CommentsRepository;
 use App\Repository\PublicationsRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -16,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PublicationsController extends AbstractController
 {
     #[Route('/', name: 'app_publications_acceuil', methods: ['GET'])]
-    public function acceuil(Request $request, PaginatorInterface $paginator, PublicationsRepository $publicationsRepository): Response
+    public function acceuil(Request $request, PaginatorInterface $paginator, PublicationsRepository $publicationsRepository, CategoriesRepository $categoriesRepository): Response
     {
         $publications = $paginator->paginate(
             $publicationsRepository->publie(),
@@ -26,6 +30,7 @@ class PublicationsController extends AbstractController
 
         return $this->render('publications/acceuil.html.twig', [
             'publications' => $publications,
+            'categories' => $categoriesRepository->findAll(),
         ]);
     }
 
@@ -64,7 +69,26 @@ class PublicationsController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'app_publications_show', methods: ['GET'])]
-    public function show(?Publications $publication): Response
+    public function show(Request $request, CommentsRepository $commentsRepository): Response
+    {
+        $comment = new Comments();
+        $form = $this->createForm(CommentsType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $commentsRepository->add($comment);
+            return $this->redirectToRoute('app_comments_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('comments/new.html.twig', [
+            'comment' => $comment,
+            'form' => $form,
+        ]);
+    }
+
+
+
+    /*public function show(Request $request, ?Publications $publication, CommentsRepository $commentsRepository): Response
     {
         if (!$publication) {
             return $this->redirectToRoute('app_blog');
@@ -72,15 +96,26 @@ class PublicationsController extends AbstractController
 
         $user = $this->getUser();
 
+        $comment = new Comments();
+        $form = $this->createForm(CommentsType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setUser($user);
+            $comment->setPublication($publication);
+            $commentsRepository->add($comment);
+            return $this->redirectToRoute('app_publications_show', ['slug' => $publication->getSlug()], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('publications/show.html.twig', [
             'publication' => $publication,
+            'formComment' => $form->createView(),
         ]);
-    }
+    }*/
 
     #[Route('/{slug}/edit', name: 'app_publications_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, ?Publications $publication, PublicationsRepository $publicationsRepository): Response
     {
-        $user = $this->getUser();
         $form = $this->createForm(PublicationsType::class, $publication);
         $form->handleRequest($request);
 

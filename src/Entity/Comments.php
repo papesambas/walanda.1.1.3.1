@@ -27,7 +27,7 @@ class Comments
     private $createdAt;
 
     #[ORM\Column(type: 'boolean')]
-    private $isActif;
+    private $isActif = false;
 
     #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]

@@ -57,7 +57,7 @@ class CategoriesController extends AbstractController
             return $this->redirectToRoute('app_blog');
         }
         return $this->render('categories/acceuil.html.twig', [
-            'category' => $categories,
+            'categories' => $categories,
             'categories' => $categoriesRepository->findAll(),
         ]);
     }
